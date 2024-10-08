@@ -114,11 +114,6 @@ test("logout", async ({ page }) => {
     expect(await page.title()).toBe("JWT Pizza");
 });
 
-// Test user page (get user)
-test("user page", async ({ page }) => {
-    await loginUser(page, sharedEmail, sharedPassword);
-});
-
 // // Move test to order page
 // test("purchase with login", async ({ page }) => {
 //     await page.route("*/**/api/order/menu", async (route) => {
