@@ -153,6 +153,17 @@ test("register a random user", async ({ page }) => {
     await expect(page.getByRole("link", { name: "TU" })).toBeVisible();
 });
 
+test("navigate to login from register", async ({ page }) => {
+    await page.goto("http://localhost:5173/register");
+    await expect(
+        page.getByRole("link", { name: "register", exact: true })
+    ).toBeVisible();
+    await page.getByRole("main").getByText("Login").click();
+    await expect(
+        page.getByRole("link", { name: "login", exact: true })
+    ).toBeVisible();
+});
+
 test("fail login with error", async ({ page }) => {
     await failLoginUser(page, sharedEmail, "wrongpassword");
     await expect(page.getByText('{"code":500,"message":"Failed')).toBeVisible();
