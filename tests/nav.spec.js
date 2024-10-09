@@ -38,22 +38,20 @@ test("docs are accessible", async ({ page }) => {
                     },
                     {
                         method: "PUT",
-                        path: "/api/auth",
-                        description: "Login existing user",
+                        path: "/api/auth/:userId",
+                        requiresAuth: true,
+                        description: "Update user",
                         example:
-                            'curl -X PUT localhost:3000/api/auth -d \'{"email":"a@jwt.com", "password":"admin"}\' -H \'Content-Type: application/json\'',
+                            'curl -X PUT localhost:3000/api/auth/1 -d \'{"email":"a@jwt.com", "password":"admin"}\' -H \'Content-Type: application/json\' -H \'Authorization: Bearer tttttt\'',
                         response: {
-                            user: {
-                                id: 1,
-                                name: "常用名字",
-                                email: "a@jwt.com",
-                                roles: [
-                                    {
-                                        role: "admin",
-                                    },
-                                ],
-                            },
-                            token: "tttttt",
+                            id: 1,
+                            name: "常用名字",
+                            email: "a@jwt.com",
+                            roles: [
+                                {
+                                    role: "admin",
+                                },
+                            ],
                         },
                     },
                 ],
