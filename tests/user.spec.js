@@ -104,6 +104,18 @@ test("login", async ({ page }) => {
     await expect(page.getByRole("link", { name: "TU" })).toBeVisible();
 });
 
+test("visit diner dashboard", async ({ page }) => {
+    await loginUser(page, sharedEmail, sharedPassword);
+    await page.getByRole("link", { name: "TU" }).click();
+    await expect(
+        page.getByRole("link", { name: "diner-dashboard" })
+    ).toBeVisible();
+    await expect(page.getByText("Your pizza kitchen")).toBeVisible();
+    await expect(page.getByText(sharedName)).toBeVisible();
+    await expect(page.getByText(sharedEmail)).toBeVisible();
+    await expect(page.getByText("diner", { exact: true })).toBeVisible();
+});
+
 // Test logout
 test("logout", async ({ page }) => {
     await loginUser(page, sharedEmail, sharedPassword);
