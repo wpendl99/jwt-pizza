@@ -18,6 +18,15 @@ test("docs are accessible", async ({ page }) => {
     ).toBeVisible();
 });
 
+test("history is accessible", async ({ page }) => {
+    await page.goto("http://localhost:5173/");
+    await page.getByRole("link", { name: "History" }).click();
+    await expect(
+        page.getByRole("link", { name: "history", exact: true })
+    ).toBeVisible();
+    await page.getByText("Mama Rucci, my my").click();
+});
+
 test("navigate to menu from home", async ({ page }) => {
     await page.goto("http://localhost:5173/");
     await page.getByRole("button", { name: "Order now" }).click();
