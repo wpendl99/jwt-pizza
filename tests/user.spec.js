@@ -21,6 +21,21 @@ test.beforeAll(async () => {
 });
 
 // Helper functions
+async function failRegisterUser(page, email, password) {
+    await page.route("*/**/api/auth", async (route) => {
+        const registerReq = { email, password };
+        expect(route.request().method()).toBe("POST");
+        expect(route.request().postDataJSON()).toMatchObject(registerReq);
+        await route.abort("failed");
+    });
+
+    await page.goto("/");
+    await page.getByRole("link", { name: "Register" }).click();
+    await page.getByPlaceholder("Full name").fill(sharedName);
+    await page.getByPlaceholder("Email address").fill(email);
+    await page.getByPlaceholder("Password").fill(password);
+    await page.getByRole("button", { name: "Register" }).click();
+}
 
 async function registerUser(page, email, password) {
     await page.route("*/**/api/auth/register", async (route) => {
@@ -45,6 +60,33 @@ async function registerUser(page, email, password) {
     await page.getByPlaceholder("Email address").fill(email);
     await page.getByPlaceholder("Password").fill(password);
     await page.getByRole("button", { name: "Register" }).click();
+}
+
+async function failLoginUser(page, email, password) {
+    await page.route("*/**/api/auth", async (route) => {
+        if (route.request().method() === "PUT") {
+            const loginReq = { email, password };
+            const loginRes = {
+                user: {
+                    id: uuidv4(),
+                    name: "Test User",
+                    email,
+                    roles: [{ role: "diner" }],
+                },
+                token: "abcdef",
+            };
+            expect(route.request().method()).toBe("PUT");
+            expect(route.request().postDataJSON()).toMatchObject(loginReq);
+            await route.abort("failed");
+        }
+    });
+
+    await page.goto("/");
+    await page.getByRole("link", { name: "Login" }).click();
+    await page.getByPlaceholder("Email address").fill(email);
+    await page.getByPlaceholder("Password").fill(password);
+
+    await page.getByRole("button", { name: "Login" }).click();
 }
 
 async function loginUser(page, email, password) {
@@ -100,10 +142,20 @@ test("visit diner dashboard without login", async ({ page }) => {
     await expect(page.getByText("Oops")).toBeVisible();
 });
 
+test("fail register with error", async ({ page }) => {
+    await failRegisterUser(page, sharedEmail, sharedPassword);
+    await expect(page.getByText('{"code":500,"message":"Failed')).toBeVisible();
+});
+
 // Test registration
 test("register a random user", async ({ page }) => {
     await registerUser(page, registerEmail, registerPassword);
     await expect(page.getByRole("link", { name: "TU" })).toBeVisible();
+});
+
+test("fail login with error", async ({ page }) => {
+    await failLoginUser(page, sharedEmail, "wrongpassword");
+    await expect(page.getByText('{"code":500,"message":"Failed')).toBeVisible();
 });
 
 // Test login
