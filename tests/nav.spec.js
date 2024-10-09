@@ -17,3 +17,12 @@ test("docs are accessible", async ({ page }) => {
         page.getByRole("link", { name: "factory", exact: true })
     ).toBeVisible();
 });
+
+test("navigate to menu from home", async ({ page }) => {
+    await page.goto("http://localhost:5173/");
+    await page.getByRole("button", { name: "Order now" }).click();
+    await expect(
+        page.getByRole("link", { name: "menu", exact: true })
+    ).toBeVisible();
+    await expect(page.getByText("Awesome is a click away")).toBeVisible();
+});
