@@ -149,6 +149,18 @@ test("login", async ({ page }) => {
     await loginFranchisee(page, sharedEmail, sharedPassword);
 });
 
+test("visit diner dashboard", async ({ page }) => {
+    await loginFranchisee(page, sharedEmail, sharedPassword);
+    await page.getByRole("link", { name: "TF" }).click();
+    await expect(
+        page.getByRole("link", { name: "diner-dashboard" })
+    ).toBeVisible();
+    await expect(page.getByText("Your pizza kitchen")).toBeVisible();
+    await expect(page.getByText(sharedName)).toBeVisible();
+    await expect(page.getByText(sharedEmail)).toBeVisible();
+    await expect(page.getByText("Franchisee on")).toBeVisible();
+});
+
 // Test Store creation
 test("create store", async ({ page }) => {
     await loginFranchisee(page, sharedEmail, sharedPassword);
