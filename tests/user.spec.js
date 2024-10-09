@@ -92,6 +92,14 @@ test("home page", async ({ page }) => {
     expect(await page.title()).toBe("JWT Pizza");
 });
 
+test("visit diner dashboard without login", async ({ page }) => {
+    await page.goto("http://localhost:5173/diner-dashboard");
+    await expect(
+        page.getByRole("link", { name: "diner-dashboard" })
+    ).toBeVisible();
+    await expect(page.getByText("Oops")).toBeVisible();
+});
+
 // Test registration
 test("register a random user", async ({ page }) => {
     await registerUser(page, registerEmail, registerPassword);
